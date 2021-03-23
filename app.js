@@ -1,3 +1,41 @@
+const selectorListSearchResult = async (index)=>{
+    const keywords = location.href
+    const arreglo = keywords.split('/searh/result/all/')
+    arreglo.length
+    if(arreglo.length >2){
+        await getSearch()
+        await wait(3000)
+    }
+    const {listSearch:search} = selectorPage
+    const resulList = document.querySelectorAll(search.list)
+    return (index == undefined)?resulList:resulList[index]
+}
+
+const getListSearch = async () =>{
+    const resulList = await selectorListSearchResult()
+    const profiles = []
+    for (let index = 0; index < resulList.lenght; index++ ){
+        const item = await selectorListSearchResult(index)
+        const data = await clickOpenPage(item)
+        profiles.push(data)
+    }
+    return profiles
+}
+
+const personal = [];
+const clickOpenPage = async (item)=>{
+    const {listSearch:search} = selectorPage
+    item.querySelector(search.link).click()
+    await wait (3000)
+    const data  = await scrapingProfile()
+    personal.push(data)
+    window.history.back()
+    await wait(3000)
+
+    return data
+
+}
+
 const scrapingProfile = async ()=>{
     //Utils
     const wait = (milliseconds)=>{
@@ -200,6 +238,9 @@ const scrapingProfile = async ()=>{
 
 //Comunication
 (function(){
+document.onload.addEventListener(()=>{ 
+})
+
 chrome.runtime.onConnect.addListener(function(port) {
     port.onMessage.addListener(function(msg) {
       const {acction} = msg
